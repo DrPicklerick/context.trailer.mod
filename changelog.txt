@@ -1,3 +1,6 @@
+v0.1.0.4
+- Added missing youtube dependency.
+
 v0.1.0.3
 - Added Multi source select list via google api youtube search.
 
