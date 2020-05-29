@@ -13,7 +13,11 @@ if __name__ == '__main__':
 
 	info = sys.listitem.getVideoInfoTag()
 	type = info.getMediaType()
-	name =info.getTitle()
+	name = info.getTitle()
+	tvshowtitle = info.getTVShowTitle()
+	if tvshowtitle:
+		name = tvshowtitle
+	# season = info.getSeason() # may utilize for season trailer search
 	year = info.getYear()
 	imdb = info.getIMDBNumber()
 

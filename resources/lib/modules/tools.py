@@ -30,8 +30,6 @@ def apiLanguage(ret_name=None):
 						'kg', 'kk', 'kj', 'ki', 'ko', 'kn', 'km', 'kl', 'ks', 'kr', 'kw', 'kv', 'ku', 'ky']
 	name = None
 	name = xbmcaddon.Addon().getSetting('api.language')
-	xbmc.log('name = %s' % name, 2)
-
 	if not name:
 		name = 'AUTO'
 	if name[-1].isupper():
@@ -73,3 +71,21 @@ def _replaceHTMLCodes(txt):
 	txt = txt.replace("&gt;", ">")
 	txt = txt.strip()
 	return txt
+
+
+def getKodiVersion():
+	return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
+
+
+def busy():
+	if int(getKodiVersion()) >= 18:
+		return xbmc.executebuiltin('ActivateWindow(busydialognocancel)')
+	else:
+		return xbmc.executebuiltin('ActivateWindow(busydialog)')
+
+
+def hide():
+	if int(getKodiVersion()) >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)'):
+		return xbmc.executebuiltin('Dialog.Close(busydialognocancel)')
+	else:
+		return xbmc.executebuiltin('Dialog.Close(busydialog)')

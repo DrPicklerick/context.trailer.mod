@@ -22,17 +22,10 @@ class Trailer:
 	def __init__(self):
 		self.base_link = 'https://www.youtube.com'
 		self.key = xbmcaddon.Addon('plugin.video.youtube').getSetting('youtube.api.key')
-		if self.key == '': self.key = random.choice(['AIzaSyA0LiS7G-KlrlfmREcCAXjyGqa_h_zfrSE', 'AIzaSyDgcri5Aipa9EBeE48IJAYyd71aiPOpwWw', 'AIzaSyBOXZVC-xzrdXSAmau5UM3rG7rc8eFIuFw'])
-
-# Test keys..I did get random "UNKNOWN" error and not sure wtf it was all about
-# Venom keys
-# AIzaSyA0LiS7G-KlrlfmREcCAXjyGqa_h_zfrSE
-# AIzaSyDgcri5Aipa9EBeE48IJAYyd71aiPOpwWw
-
-# Venom keys2
-# AIzaSyBOXZVC-xzrdXSAmau5UM3rG7rc8eFIuFw
-
-		# if self.key == '': self.key = 'QUl6YVN5QlctWjNUbmVMWC1hRzlUQzVHMDYxQlRjOWJCZ2Z0bVBB'.decode('base64')
+		if self.key == '': self.key = random.choice([
+			'AIzaSyA0LiS7G-KlrlfmREcCAXjyGqa_h_zfrSE',
+			'AIzaSyDgcri5Aipa9EBeE48IJAYyd71aiPOpwWw',
+			'AIzaSyBOXZVC-xzrdXSAmau5UM3rG7rc8eFIuFw'])
 		try:
 			self.key_link = '&key=%s' % self.key
 		except:
@@ -42,6 +35,7 @@ class Trailer:
 
 
 	def play(self, type='', name='', year='', url='', imdb='', windowedtrailer=0):
+		tools.busy()
 		try:
 			url = self.worker(type, name, year, url, imdb)
 			if not url:
@@ -71,7 +65,7 @@ class Trailer:
 			else:
 				raise Exception()
 		except:
-			traceback.print_exc()
+			# traceback.print_exc()
 			query = name + ' ' + str(year) + ' trailer'
 			query = self.search_link % quote_plus(query)
 			return self.search(query, type, name, year, imdb)
@@ -89,6 +83,7 @@ class Trailer:
 
 			labels = [i.get('snippet', {}).get('title') for i in json_items]
 			labels = [tools.replaceHTMLCodes(i) for i in labels]
+			tools.hide()
 			select = xbmcgui.Dialog().select('YOUTUBE TRAILERS:', labels)
 			if select == -1: return
 			items = [items[select]]
