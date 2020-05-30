@@ -17,8 +17,7 @@ if __name__ == '__main__':
 	tvshowtitle = info.getTVShowTitle()
 	if tvshowtitle:
 		name = tvshowtitle
-	# season = info.getSeason() # may utilize for season trailer search
+	# season = info.getSeason() # may utilize for season specific trailer search
 	year = info.getYear()
-	imdb = info.getIMDBNumber()
 
-	trailer.Trailer().play(type, name, year, imdb, windowedtrailer=1 if windowed else 0)
+	trailer.Trailer().play(type, name, year, windowedtrailer=1 if windowed else 0)

@@ -8,8 +8,6 @@ try:
 except:
 	from html.parser import HTMLParser
 
-from resources.lib.modules import dom_parser
-
 
 def apiLanguage(ret_name=None):
 	langDict = {'Bulgarian': 'bg', 'Chinese': 'zh', 'Croatian': 'hr', 'Czech': 'cs', 'Danish': 'da', 'Dutch': 'nl',
@@ -44,17 +42,6 @@ def apiLanguage(ret_name=None):
 	if ret_name:
 		lang['youtube'] = [i[0] for i in langDict.iteritems() if i[1] == lang['youtube']][0]
 	return lang
-
-
-def parseDOM(html, name='', attrs=None, ret=False):
-	if attrs:
-		attrs = dict((key, re.compile(value + ('$' if value else ''))) for key, value in attrs.iteritems())
-	results = dom_parser.parse_dom(html, name, attrs, ret)
-	if ret:
-		results = [result.attrs[ret.lower()] for result in results]
-	else:
-		results = [result.content for result in results]
-	return results
 
 
 def replaceHTMLCodes(txt):
