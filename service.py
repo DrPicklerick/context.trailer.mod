@@ -27,9 +27,9 @@ class PropertiesUpdater(xbmc.Monitor):
 
 
 # start monitoring settings changes events
-xbmc.log('Context.Trailer: service started', xbmc.LOGNOTICE)
+xbmc.log('[ context.trailer.mod ] service started', xbmc.LOGNOTICE)
 properties_monitor = PropertiesUpdater()
 
 # wait until abort is requested
 properties_monitor.waitForAbort()
-xbmc.log('Context.Trailer: service stopped',xbmc.LOGNOTICE)
+xbmc.log('[ context.trailer.mod ] service stopped',xbmc.LOGNOTICE)
