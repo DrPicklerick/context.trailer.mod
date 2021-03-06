@@ -1,3 +1,6 @@
+v0.1.0.7
+- Matrix compatibility(py3) update.
+
 v0.1.0.6
 - Added notication upon youtube quota exceeded error.
 

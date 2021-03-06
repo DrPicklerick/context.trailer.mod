@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import json
 import random
 import requests
-import traceback
 import xbmc
 import xbmcaddon
 import xbmcgui
-
-try:
+try: #Py2
 	from urllib import quote_plus
-except:
+except ImportError: #Py3
 	from urllib.parse import quote_plus
-
 from resources.lib.modules import tools
 
 
@@ -32,8 +28,7 @@ class Trailer:
 		tools.busy()
 		try:
 			url = self.worker(type, name, year)
-			if not url:
-				return
+			if not url: return
 			xbmc.executebuiltin("PlayMedia(%s)" % (url))
 			if windowedtrailer == 1:
 				xbmc.sleep(100)
@@ -41,6 +36,7 @@ class Trailer:
 					xbmc.sleep(100)
 				xbmc.executebuiltin("Dialog.Close(%s, true)" % xbmcgui.getCurrentWindowDialogId())
 		except:
+			import traceback
 			traceback.print_exc()
 
 
@@ -54,10 +50,8 @@ class Trailer:
 	def search(self, url):
 		try:
 			apiLang = tools.apiLanguage().get('youtube', 'en')
-			if apiLang != 'en':
-				url += "&relevanceLanguage=%s" % apiLang
-
-			response = json.loads(requests.get(url).text)
+			if apiLang != 'en': url += "&relevanceLanguage=%s" % apiLang
+			response = requests.get(url).json()
 			error =  response.get('error', [])
 			if error:
 				tools.hide()
@@ -73,14 +67,13 @@ class Trailer:
 			labels = [tools.replaceHTMLCodes(i) for i in labels]
 			tools.hide()
 			select = xbmcgui.Dialog().select('YOUTUBE TRAILERS:', labels)
-			if select == -1:
-				return None
+			if select == -1: return None
 			item = [items[select]]
 
 			for vid_id in item:
 				url = 'plugin://plugin.video.youtube/play/?video_id=%s' % vid_id
 				return url
 		except:
-			tools.hide()
+			import traceback
 			traceback.print_exc()
-			return
+			tools.hide()

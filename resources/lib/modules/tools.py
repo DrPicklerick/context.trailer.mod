@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import re
+from re import sub as re_sub
 import xbmc
 import xbmcaddon
-try:
+try: #Py2
 	from HTMLParser import HTMLParser
-except:
-	from html.parser import HTMLParser
-
+	unescape = HTMLParser().unescape
+	def iteritems(d, **kw):
+		return d.iteritems(**kw)
+except ImportError: #Py3
+	from html import unescape
+	def iteritems(d, **kw):
+		return iter(d.items(**kw))
 
 def apiLanguage(ret_name=None):
 	langDict = {'Bulgarian': 'bg', 'Chinese': 'zh', 'Croatian': 'hr', 'Czech': 'cs', 'Danish': 'da', 'Dutch': 'nl',
@@ -28,51 +32,46 @@ def apiLanguage(ret_name=None):
 						'kg', 'kk', 'kj', 'ki', 'ko', 'kn', 'km', 'kl', 'ks', 'kr', 'kw', 'kv', 'ku', 'ky']
 	name = None
 	name = xbmcaddon.Addon().getSetting('api.language')
-	if not name:
-		name = 'AUTO'
+	if not name: name = 'AUTO'
 	if name[-1].isupper():
-		try:
-			name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
+		try: name = xbmc.getLanguage(xbmc.ENGLISH_NAME).split(' ')[0]
 		except: pass
-	try:
-		name = langDict[name]
-	except:
-		name = 'en'
+	try: name = langDict[name]
+	except: name = 'en'
 	lang = {'youtube': name} if name in youtube else {'youtube': 'en'}
 	if ret_name:
-		lang['youtube'] = [i[0] for i in langDict.iteritems() if i[1] == lang['youtube']][0]
+		lang['youtube'] = [i[0] for i in iteritems(langDict) if i[1] == lang['youtube']][0]
 	return lang
-
 
 def replaceHTMLCodes(txt):
 	# Some HTML entities are encoded twice. Decode double.
 	return _replaceHTMLCodes(_replaceHTMLCodes(txt))
 
-
 def _replaceHTMLCodes(txt):
-	txt = re.sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
-	txt = HTMLParser().unescape(txt)
+	if not txt: return ''
+	txt = re_sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
+	txt = unescape(txt)
 	txt = txt.replace("&quot;", "\"")
 	txt = txt.replace("&amp;", "&")
 	txt = txt.replace("&lt;", "<")
 	txt = txt.replace("&gt;", ">")
+	txt = txt.replace("&#38;", "&")
+	txt = txt.replace("&nbsp;", "")
+	txt = txt.replace('&#8230;', '...')
+	txt = txt.replace('&#8217;', '\'')
+	txt = txt.replace('&#8211;', '-')
 	txt = txt.strip()
 	return txt
 
-
 def getKodiVersion():
-	return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
-
+	return int(xbmc.getInfoLabel("System.BuildVersion")[:2])
 
 def busy():
-	if int(getKodiVersion()) >= 18:
+	if getKodiVersion() >= 18:
 		return xbmc.executebuiltin('ActivateWindow(busydialognocancel)')
-	else:
-		return xbmc.executebuiltin('ActivateWindow(busydialog)')
-
+	else: return xbmc.executebuiltin('ActivateWindow(busydialog)')
 
 def hide():
-	if int(getKodiVersion()) >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)'):
+	if getKodiVersion() >= 18 and xbmc.getCondVisibility('Window.IsActive(busydialognocancel)'):
 		return xbmc.executebuiltin('Dialog.Close(busydialognocancel)')
-	else:
-		return xbmc.executebuiltin('Dialog.Close(busydialog)')
+	else: return xbmc.executebuiltin('Dialog.Close(busydialog)')
